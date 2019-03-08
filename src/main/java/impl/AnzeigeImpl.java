@@ -155,6 +155,8 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
 
 
     @Override
+
+    // To update a Anzeige
     public String updateAnzeige(Anzeige anzeige) {
         int update = 0;
         String res = "";
