@@ -16,6 +16,7 @@ public class Anzeige {
     private String status;
     private String kategorie;
     private Image image;
+    private Kommentar kommentar;
 
     public Anzeige() {
     }
@@ -101,5 +102,13 @@ public class Anzeige {
 
     public void setKategorie(String kategorie) {
         this.kategorie = kategorie;
+    }
+
+    public Kommentar getKommentar() {
+        return kommentar;
+    }
+
+    public void setKommentar(Kommentar kommentar) {
+        this.kommentar = kommentar;
     }
 }

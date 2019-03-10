@@ -10,6 +10,7 @@ public class Benutzer {
     private String name;
     private String password;
     private Timestamp eintrittsdatum;
+    private Kommentar kommentar;
 
     public Benutzer() {
     }
@@ -56,5 +57,13 @@ public class Benutzer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Kommentar getKommentar() {
+        return kommentar;
+    }
+
+    public void setKommentar(Kommentar kommentar) {
+        this.kommentar = kommentar;
     }
 }

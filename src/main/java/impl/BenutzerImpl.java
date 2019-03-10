@@ -1,6 +1,7 @@
 package impl;
 
 import entities.Benutzer;
+import entities.Kommentar;
 import request.LoginRequest;
 import request.RegisterRequest;
 import utils.BenutzerDao;
@@ -154,5 +155,34 @@ public class BenutzerImpl extends BaseService implements BenutzerDao {
     @Override
     public void deleteBenutzerByBenutzerName() {
 
+    }
+
+    @Override
+    public List<Benutzer> getBenutzerKommentare(String benutzername) {
+
+        List<Benutzer> benutzerList = new ArrayList<>();
+
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT b.*, k.* FROM Benutzer b, Kommentar k WHERE b.benutzername=k.username AND b.benutzername=?");
+            ps.setString(1, benutzername);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Benutzer b = new Benutzer();
+                b.setBenutzername(rs.getString("benutzername"));
+                b.setName(rs.getString("name"));
+                b.setEintrittsdatum(rs.getTimestamp("eintrittsdatum"));
+                Kommentar k = new Kommentar();
+                k.setId(rs.getInt(5));
+                k.setText(rs.getString(6));
+                k.setErstellungsdatum(rs.getTimestamp(7));
+                k.setUsername(rs.getString(8));
+                k.setAnzeigeId(rs.getInt(9));
+                b.setKommentar(k);
+                benutzerList.add(b);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return benutzerList;
     }
 }

@@ -7,15 +7,20 @@ public class Kommentar {
     private int id;
     private String text;
     private Timestamp erstellungsdatum;
-    private Benutzer benutzer;
+    private String username;
+    private int anzeigeId;
+//    private Benutzer benutzer;
+
 //    private Anzeige anzeige;
 
     public Kommentar(){}
 
-    public Kommentar(int id, String text, Timestamp erstellungsdatum){
+    public Kommentar(int id, String text, Timestamp erstellungsdatum, String username, int anzeigeId) {
         this.id = id;
         this.text = text;
         this.erstellungsdatum = erstellungsdatum;
+        this.username = username;
+        this.anzeigeId = anzeigeId;
     }
 
     public int getId() {
@@ -42,14 +47,31 @@ public class Kommentar {
         this.erstellungsdatum = erstellungsdatum;
     }
 
-    public Benutzer getBenutzer() {
-        return benutzer;
+//    public Benutzer getBenutzer() {
+//        return benutzer;
+//    }
+//
+//    public void setBenutzer(Benutzer benutzer) {
+//        this.benutzer = benutzer;
+//    }
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setBenutzer(Benutzer benutzer) {
-        this.benutzer = benutzer;
+    public void setUsername(String username) {
+        this.username = username;
     }
-//
+
+    public int getAnzeigeId() {
+        return anzeigeId;
+    }
+
+    public void setAnzeigeId(int anzeigeId) {
+        this.anzeigeId = anzeigeId;
+    }
+
+    //
 //    public Anzeige getAnzeige() {
 //        return anzeige;
 //    }

@@ -37,6 +37,12 @@ public class BenutzerResource {
         return  Response.ok().entity(repo.getAllBenutzer()).build();
     }
 
+    @GET
+    @Path("/getBenutzerKommentare/{benutzername}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBenutzerKommentare(@PathParam("benutzername") String benutzername) throws IOException { return Response.ok().entity(repo.getBenutzerKommentare(benutzername)).build(); }
+
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)

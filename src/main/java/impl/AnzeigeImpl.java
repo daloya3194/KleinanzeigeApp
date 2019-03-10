@@ -1,17 +1,16 @@
 package impl;
 
 import entities.Anzeige;
+import entities.Kommentar;
 import request.AnzeigeRequest;
 import utils.AnzeigeDao;
-import utils.DBUtil;
 import utils.StoreException;
-import java.io.Closeable;
-import java.io.IOException;
+
 import java.sql.*;
 import java.util.*;
-import java.util.Date;
 
 public class AnzeigeImpl extends BaseService implements AnzeigeDao {
+
 
     public AnzeigeImpl (){
         super();
@@ -270,5 +269,42 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
         }
         return res;
     }
+
+    @Override
+    public List<Anzeige> getAnzeigeMitKommentare(int id) {
+
+        List<Anzeige> anzeigeList = new ArrayList<>();
+
+
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT a.*, k.* FROM Anzeige a, Kommentar k WHERE a.id=k.anzeigeID AND a.id=?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Anzeige a = new Anzeige();
+                a.setId(rs.getInt("id"));
+                a.setTitel(rs.getString("titel"));
+                a.setText(rs.getString("text"));
+                a.setPreis(rs.getDouble("preis"));
+                a.setErstellungsdatum(rs.getTimestamp("erstellungsdatum"));
+                a.setErsteller(rs.getString("ersteller"));
+                a.setStatus(rs.getString("status"));
+                a.setKategorie(rs.getString("kategorie"));
+                Kommentar k = new Kommentar();
+                k.setId(rs.getInt(9));
+                k.setText(rs.getString(10));
+                k.setErstellungsdatum(rs.getTimestamp(11));
+                k.setUsername(rs.getString(12));
+                k.setAnzeigeId(rs.getInt(13));
+                a.setKommentar(k);
+                anzeigeList.add(a);
+
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return anzeigeList;
+    }
+
 
 }

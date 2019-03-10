@@ -26,6 +26,12 @@ public class AnzeigeResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByTitel(@PathParam("titel") String titel) throws IOException { return Response.ok().entity(repo.searchByTitel(titel)).build(); }
 
+    @GET
+    @Path("/getAnzeigeMitKommentare/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAnzeigeMitKommentare(@PathParam("id") int id) throws IOException { return Response.ok().entity(repo.getAnzeigeMitKommentare(id)).build(); }
+
     @POST
     @Path("/addanzeige")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -51,4 +57,5 @@ public class AnzeigeResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateAnzeige(Anzeige anzeige) { return Response.ok().entity(repo.updateAnzeige(anzeige)).build(); }
+
 }

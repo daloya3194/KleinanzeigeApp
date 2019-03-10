@@ -19,4 +19,6 @@ public interface BenutzerDao {
     public String deleteBenutzer(Benutzer benutzer);
 
     public void deleteBenutzerByBenutzerName();
+
+    public List<Benutzer> getBenutzerKommentare(String benutzername);
 }

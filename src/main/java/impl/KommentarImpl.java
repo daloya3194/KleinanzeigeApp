@@ -69,30 +69,46 @@ public class KommentarImpl extends BaseService implements KommentarDao {
 
         List<Kommentar> kommentarList = new ArrayList<>();
 
+//        try {
+//            PreparedStatement ps = connection.prepareStatement("select k.*, b.*, a.* from Kommentar k\n" +
+//                    "left join  Benutzer b on k.username = b.benutzername\n" +
+//                    "left join Anzeige a on a.id = k.anzeigeId;");
+//            ResultSet rs = ps.executeQuery();
+//            while (rs.next()) {
+//                Kommentar k = new Kommentar();
+//                k.setId(rs.getInt("id"));
+//                k.setText(rs.getString("text"));
+//                k.setErstellungsdatum(rs.getTimestamp("erstellungsdatum"));
+//                Benutzer b = new Benutzer();
+//                // Todo create user object
+//                b.setBenutzername(rs.getString("benutzername"));
+//                b.setName(rs.getString("name"));
+//                b.setEintrittsdatum(rs.getTimestamp("eintrittsdatum"));
+//                k.setBenutzer(b);
+//            /*    Anzeige a = new Anzeige();
+//                // Todo create anzeige object
+//                a.setTitel(rs.getString("titel"));
+//                a.setText(rs.getString(12));
+//                k.setAnzeige(a);*/
+//                kommentarList.add(k);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+
         try {
-            PreparedStatement ps = connection.prepareStatement("select k.*, b.*, a.* from Kommentar k\n" +
-                    "left join  Benutzer b on k.username = b.benutzername\n" +
-                    "left join Anzeige a on a.id = k.anzeigeId;");
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Kommentar");
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            while (rs.next()){
                 Kommentar k = new Kommentar();
-                k.setId(rs.getInt("id"));
-                k.setText(rs.getString("text"));
-                k.setErstellungsdatum(rs.getTimestamp("erstellungsdatum"));
-                Benutzer b = new Benutzer();
-                // Todo create user object
-                b.setBenutzername(rs.getString("benutzername"));
-                b.setName(rs.getString("name"));
-                b.setEintrittsdatum(rs.getTimestamp("eintrittsdatum"));
-                k.setBenutzer(b);
-            /*    Anzeige a = new Anzeige();
-                // Todo create anzeige object
-                a.setTitel(rs.getString("titel"));
-                a.setText(rs.getString(12));
-                k.setAnzeige(a);*/
+                k.setId(rs.getInt(1));
+                k.setText(rs.getString(2));
+                k.setErstellungsdatum(rs.getTimestamp(3));
+                k.setUsername(rs.getString(4));
+                k.setAnzeigeId(rs.getInt(5));
                 kommentarList.add(k);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){
             e.printStackTrace();
         }
         return kommentarList;

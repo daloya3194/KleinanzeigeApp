@@ -18,4 +18,6 @@ public interface AnzeigeDao {
     public  String deleteAnzeigeById(Anzeige anzeige);
 
     public String kaufAnzeige(Anzeige anzeige);
+
+    public List<Anzeige> getAnzeigeMitKommentare(int id);
 }
