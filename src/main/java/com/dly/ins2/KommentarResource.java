@@ -22,13 +22,19 @@ public class KommentarResource {
         return Response.ok().entity(repo.getAllKommentar()).build();
     }
 
-    @POST
-    @Path("/add")
+    @GET
+    @Path("/add/{id}/{benutzername}/{text}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addKommentar(KommentReqest kommentar) throws IOException {
-        String resp = repo.addKommentar(kommentar);
-        return Response.ok().entity(resp).build();
+    public Response addKommentar(@PathParam("id") int id, @PathParam("benutzername") String benutzername, @PathParam("text") String text) throws IOException {
+        return Response.ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Headers",
+                        "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Methods",
+                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .entity(repo.addKommentar(id, benutzername, text)).build();
     }
 
     @POST

@@ -43,10 +43,10 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
     }
 
     @Override
-    public String addAnzeige(AnzeigeRequest anzeige) {
+    public Anzeige addAnzeige(String titel, String text, Double preis, String ersteller, String kategorie) {
         int insered = 0;
         int insered2 = 0;
-        String res = "";
+        Anzeige res = new Anzeige();
 
 //        Random random = new Random();
 //        int rand = random.nextInt(1000);
@@ -57,12 +57,12 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Anzeige (titel,text,preis,ersteller,status,kategorie) VALUES (?,?,?,?,?,?)");
-            preparedStatement.setString(1, anzeige.getTitel());
-            preparedStatement.setString(2, anzeige.getText());
-            preparedStatement.setDouble(3, anzeige.getPreis());
-            preparedStatement.setString(4, anzeige.getErsteller());
+            preparedStatement.setString(1, titel);
+            preparedStatement.setString(2, text);
+            preparedStatement.setDouble(3, preis);
+            preparedStatement.setString(4, ersteller);
             preparedStatement.setString(5, status);
-            preparedStatement.setString(6, anzeige.getKategorie());
+            preparedStatement.setString(6, kategorie);
             insered = preparedStatement.executeUpdate();
 //            connection.commit();
 
@@ -92,14 +92,14 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
             } catch (SQLException e){
                 e.printStackTrace();
             }
-            res = "ADD OK";
+            res.setTitel(titel);
         } else {
             try {
                 connection.rollback();
             } catch (SQLException e){
                 e.printStackTrace();
             }
-            res = "ADD NOT OK";
+            res.setTitel(null);
 
         }
         return res;
@@ -156,16 +156,18 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
     @Override
 
     // To update a Anzeige
-    public String updateAnzeige(Anzeige anzeige) {
+    public Anzeige updateAnzeige(int id, String titel, String text, Double preis, String kategorie) {
+
+        Anzeige anzeige = new Anzeige();
         int update = 0;
-        String res = "";
+
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE Anzeige SET titel=?, text=?, preis=?, kategorie=? WHERE id=?");
-            ps.setString(1, anzeige.getTitel());
-            ps.setString(2, anzeige.getText());
-            ps.setDouble(3, anzeige.getPreis());
-            ps.setString(4, anzeige.getKategorie());
-            ps.setInt(5, anzeige.getId());
+            ps.setString(1, titel);
+            ps.setString(2, text);
+            ps.setDouble(3, preis);
+            ps.setString(4, kategorie);
+            ps.setInt(5, id);
             update = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -176,26 +178,28 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            res = "UPDATE OK";
+            anzeige.setTitel(titel);
         } else {
             try {
                 connection.rollback();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            res = "UPDATE NICHT OK";
+            anzeige = null;
         }
-        return res;
+        return anzeige;
     }
 
     @Override
-    public String deleteAnzeigeById(Anzeige anzeige) {
+    public Anzeige deleteAnzeigeById(int id) {
+
+        String result = "deleteOK";
         int delete = 0;
-        String res = "";
+        Anzeige anzeige = new Anzeige();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Anzeige WHERE id=?");
-            preparedStatement.setInt(1, anzeige.getId());
+            preparedStatement.setInt(1, id);
             delete = preparedStatement.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -215,30 +219,30 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        res = "DELETE OK";
+        anzeige.setTitel(result);
         } else {
             try {
                 connection.rollback();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        res = "DELETE NICHT OK";
+        anzeige = null;
         }
-        return res;
+        return anzeige;
     }
 
     @Override
-    public String kaufAnzeige(Anzeige anzeige) {
+    public Anzeige kaufAnzeige(int id, String benutzername) {
 
+        Anzeige anzeige = new Anzeige();
+        String result = "kaufOk";
         int ps1 = 0;
         int ps2 = 0;
-        String res = "";
-        String benutzername = "k.ralf";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Kauft (benutzername,anzeigeID) VALUES (?,?)");
             preparedStatement.setString(1, benutzername);
-            preparedStatement.setInt(2, anzeige.getId());
+            preparedStatement.setInt(2, id);
             ps1 = preparedStatement.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -246,7 +250,7 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
 
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE Anzeige SET status='verkauft' WHERE id=?");
-            ps.setInt(1, anzeige.getId());
+            ps.setInt(1, id);
             ps2 = ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -257,17 +261,17 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
             } catch (SQLException e){
                 e.printStackTrace();
             }
-            res = "ANZEIGE GEKAUFT";
+            anzeige.setTitel(result);
         } else {
             try {
                 connection.rollback();
             } catch (SQLException e){
                 e.printStackTrace();
             }
-            res = "ANZEIGE NICHT GEKAUFT";
+            anzeige = null;
 
         }
-        return res;
+        return anzeige;
     }
 
     @Override
@@ -298,7 +302,6 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
                 k.setAnzeigeId(rs.getInt(13));
                 a.setKommentar(k);
                 anzeigeList.add(a);
-
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -306,5 +309,50 @@ public class AnzeigeImpl extends BaseService implements AnzeigeDao {
         return anzeigeList;
     }
 
+    @Override
+    public Anzeige getAnzeigeById(int id) {
+        Anzeige a = new Anzeige();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Anzeige WHERE id=?");
+            preparedStatement.setInt(1, id);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                a.setId(rs.getInt("id"));
+                a.setTitel(rs.getString("titel"));
+                a.setText(rs.getString("text"));
+                a.setPreis(rs.getDouble("preis"));
+                a.setErstellungsdatum(rs.getTimestamp("erstellungsdatum"));
+                a.setErsteller(rs.getString("ersteller"));
+                a.setStatus(rs.getString("status"));
+                a.setKategorie(rs.getString("kategorie"));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return a;
+    }
 
+    @Override
+    public List<Kommentar> getAnzeigeKommentare(int id) {
+
+        List<Kommentar> kommentarList = new ArrayList<>();
+
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Kommentar WHERE anzeigeId=?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Kommentar k = new Kommentar();
+                k.setId(rs.getInt(1));
+                k.setText(rs.getString(2));
+                k.setErstellungsdatum(rs.getTimestamp(3));
+                k.setUsername(rs.getString(4));
+                k.setAnzeigeId(rs.getInt(5));
+                kommentarList.add(k);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return kommentarList;
+    }
 }

@@ -1,5 +1,6 @@
 package impl;
 
+import entities.Anzeige;
 import entities.Benutzer;
 import entities.Kommentar;
 import request.LoginRequest;
@@ -23,19 +24,25 @@ public class BenutzerImpl extends BaseService implements BenutzerDao {
     }
 
     @Override
-    public String login(LoginRequest benutzer) {
+    public Benutzer login(String benutzername, String password) {
+        Benutzer benutzer = new Benutzer();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT benutzername,password FROM Benutzer WHERE benutzername=? AND password=?");
-            preparedStatement.setString(1, benutzer.getBenutzername());
-            preparedStatement.setString(2, benutzer.getPassword());
+            preparedStatement.setString(1, benutzername);
+            preparedStatement.setString(2, password);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()){
-                return "LOGIN OK";
+                String benutzername1 = rs.getString("benutzername");
+                String password1 = rs.getString("password");
+                benutzer.setBenutzername(benutzername1);
+//                benutzer.setPassword(password1);
+                benutzer.generateToken();
+                return benutzer;
             }
         } catch (SQLException e){
             e.printStackTrace();
         }
-        return "LOGIN FAIL";
+        return null;
     }
 
     @Override
@@ -65,20 +72,58 @@ public class BenutzerImpl extends BaseService implements BenutzerDao {
 
     @Override
     public Benutzer getBenutzerByBenutzername(String benutzername) {
-        return null;
+        Benutzer benutzer = new Benutzer();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Benutzer WHERE benutzername=?");
+            ps.setString(1, benutzername);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                benutzer.setBenutzername(rs.getString("benutzername"));
+                benutzer.setName(rs.getString("name"));
+                benutzer.setEintrittsdatum(rs.getTimestamp("eintrittsdatum"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return benutzer;
     }
 
     @Override
-    public String addBenutzer(RegisterRequest benutzer) {
+    public List<Anzeige> getBenutzerAnzeige(String benutzername) throws StoreException {
+        List<Anzeige> anzeiges = new ArrayList<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Anzeige WHERE ersteller=?");
+            ps.setString(1, benutzername);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Anzeige a = new Anzeige();
+                a.setId(rs.getInt("id"));
+                a.setTitel(rs.getString("titel"));
+                a.setText(rs.getString("text"));
+                a.setPreis(rs.getDouble("preis"));
+                a.setErstellungsdatum(rs.getTimestamp("erstellungsdatum"));
+                a.setErsteller(rs.getString("ersteller"));
+                a.setStatus(rs.getString("status"));
+                a.setKategorie(rs.getString("kategorie"));
+                anzeiges.add(a);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return anzeiges;
+    }
+
+    @Override
+    public Benutzer addBenutzer(String benutzername, String name, String password) {
         int insered = 0;
-        String res = "";
+        Benutzer res = new Benutzer();
 //        Timestamp datum = new Timestamp(System.currentTimeMillis());
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Benutzer (benutzername,name,password) VALUES (?,?,?)");
-            preparedStatement.setString(1, benutzer.getBenutzername());
-            preparedStatement.setString(2, benutzer.getName());
-            preparedStatement.setString(3, benutzer.getPassword());
+            preparedStatement.setString(1, benutzername);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, password);
             insered = preparedStatement.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -89,7 +134,7 @@ public class BenutzerImpl extends BaseService implements BenutzerDao {
             } catch (SQLException e){
                 e.printStackTrace();
             }
-        res = "REGISTER OK";
+        res.setBenutzername(benutzername);
 
         } else {
             try {
@@ -97,7 +142,7 @@ public class BenutzerImpl extends BaseService implements BenutzerDao {
             } catch (SQLException e){
                 e.printStackTrace();
             }
-        res = "REGISTER NOT OK";
+        res = null;
         }
 
         return res;

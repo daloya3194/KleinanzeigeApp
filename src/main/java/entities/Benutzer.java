@@ -1,5 +1,8 @@
 package entities;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
 
@@ -11,6 +14,7 @@ public class Benutzer {
     private String password;
     private Timestamp eintrittsdatum;
     private Kommentar kommentar;
+    private String token;
 
     public Benutzer() {
     }
@@ -65,5 +69,21 @@ public class Benutzer {
 
     public void setKommentar(Kommentar kommentar) {
         this.kommentar = kommentar;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void generateToken(){
+        Algorithm algorithm = Algorithm.HMAC256("ZDKAHEOWKFASDFHIWEODJAFK");
+        this.token = JWT.create()
+                .withIssuer("INS2")
+                .withClaim("Username", this.benutzername)
+                .sign(algorithm);
     }
 }

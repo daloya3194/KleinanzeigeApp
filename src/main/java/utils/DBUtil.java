@@ -1,13 +1,18 @@
 package utils;
 
-import com.ibm.db2.jcc.DB2BaseDataSource;
-import com.ibm.db2.jcc.DB2Driver;
+//import com.ibm.db2.jcc.DB2BaseDataSource;
+//import com.ibm.db2.jcc.DB2Driver;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 
 public class DBUtil {
@@ -88,5 +93,11 @@ public class DBUtil {
         return exists;
     }
 
+    public static String getUsername(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        Map<String , Claim> claimMap = jwt.getClaims();
+        Claim claim = claimMap.get("Username");
+        return claim.asString();
+    }
 
 }

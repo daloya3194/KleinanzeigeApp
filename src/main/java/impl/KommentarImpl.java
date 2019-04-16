@@ -23,7 +23,9 @@ public class KommentarImpl extends BaseService implements KommentarDao {
     }
 
     @Override
-    public String addKommentar(KommentReqest kommentar) {
+    public Kommentar addKommentar(int id, String benutzername, String text) {
+
+        Kommentar kommentar = new Kommentar();
         int ins = 0;
         String res = "";
 
@@ -37,9 +39,9 @@ public class KommentarImpl extends BaseService implements KommentarDao {
 //            PreparedStatement ps = connection.prepareStatement("INSERT INTO Kommentar (id,text,erstellungsdatum) VALUES (?,?,?)");
             PreparedStatement ps = connection.prepareStatement("INSERT INTO Kommentar (text, username, anzeigeId) VALUES (?, ?,?)");
 //            ps.setInt(1, id);
-            ps.setString(1, kommentar.getText());
-            ps.setString(2, kommentar.getUsername());
-            ps.setInt(3, kommentar.getAnzeigeId());
+            ps.setString(1, text);
+            ps.setString(2, benutzername);
+            ps.setInt(3, id);
 //            ps.setTimestamp(3, datum);
             ins = ps.executeUpdate();
         } catch (SQLException e) {
@@ -51,17 +53,17 @@ public class KommentarImpl extends BaseService implements KommentarDao {
             } catch (SQLException e){
                 e.printStackTrace();
             }
-            res = "OK";
+            kommentar.setText(text);
         } else {
             try {
                 connection.rollback();
             } catch (SQLException e){
                 e.printStackTrace();
             }
-            res = "NOT OK";
+            kommentar = null;
 
         }
-        return res;
+        return kommentar;
     }
 
     @Override
